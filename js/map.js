@@ -11,10 +11,12 @@ var MIN_PRICE = 1000;
 var MAX_PRICE = 1000000;
 var PIN_HALF_WIDTH = 20;
 var PIN_HEIGHT = 62;
-var COORD_MIN_X = 300 + PIN_HALF_WIDTH;
-var COORD_MAX_X = 900 - PIN_HALF_WIDTH;
-var COORD_MIN_Y = 100 + PIN_HEIGHT;
-var COORD_MAX_Y = 500 - PIN_HEIGHT;
+var COORD = {
+  minX: 300 + PIN_HALF_WIDTH,
+  maxX: 900 - PIN_HALF_WIDTH,
+  minY: 100 + PIN_HEIGHT,
+  maxY: 500 - PIN_HEIGHT
+};
 var COUNT_ROOMS = 5;
 var COUNT_GUESTS = 10;
 
@@ -89,41 +91,35 @@ var getRandomArrayElement = function (collection) {
   return randomElement;
 };
 
-// получение случайной длины массива
-var getRandomArrayLength = function (collection) {
-  var randomLength = Math.ceil(Math.random() * collection.length);
-  return randomLength;
-};
-
 // получение случайного числа
 var getRandomNumber = function (count) {
-  var number = Math.ceil(Math.random() * count);
+  var number = Math.floor(Math.random() * count);
   return number;
 };
 
 // получение случайного числа из диапазона
 var getRandomNumberFromRange = function (min, max) {
-  var number = Math.floor(Math.random() * (max - min) + min);
+  var number = getRandomNumber(max + 1 - min) + min;
   return number;
 };
 
 // получение случайного местонахождения
-var getRandomLocation = function (minX, maxX, minY, maxY) {
+var getRandomLocation = function (coord) {
   var randomLocation = {};
-  randomLocation.x = getRandomNumberFromRange(minX, maxX);
-  randomLocation.y = getRandomNumberFromRange(minY, maxY);
+  randomLocation.x = getRandomNumberFromRange(coord.minX, coord.maxX);
+  randomLocation.y = getRandomNumberFromRange(coord.minY, coord.maxY);
   return randomLocation;
 };
 
 // получение случайного массива из существующего
-var getRandomArrayFromExists = function (array) {
+var getRandomArrayFromExisting = function (array) {
   var newArray = array.slice();
 
   function compareRandom() {
     return Math.random() - 0.5;
   }
   newArray.sort(compareRandom);
-  newArray.length = getRandomArrayLength(array);
+  newArray.length = getRandomNumberFromRange(1, array.length);
   return newArray;
 };
 
@@ -133,11 +129,11 @@ var GetOffer = function (location) {
   this.address = location.x + ', ' + location.y;
   this.price = getRandomNumberFromRange(MIN_PRICE, MAX_PRICE);
   this.type = getRandomArrayElement(HOUSE_TYPES);
-  this.rooms = getRandomNumber(COUNT_ROOMS);
-  this.guests = getRandomNumber(COUNT_GUESTS);
+  this.rooms = getRandomNumberFromRange(1, COUNT_ROOMS);
+  this.guests = getRandomNumberFromRange(1, COUNT_GUESTS);
   this.checkin = getRandomArrayElement(CHECK_IN_TIMES);
   this.checkout = getRandomArrayElement(CHECK_OUT_TIMES);
-  this.features = getRandomArrayFromExists(FEATURES_LIST);
+  this.features = getRandomArrayFromExisting(FEATURES_LIST);
   this.description = '';
   this.photos = [];
 };
@@ -145,7 +141,7 @@ var GetOffer = function (location) {
 // получение объявления
 var getAd = function (number) {
   var ad = {};
-  var tempLocation = getRandomLocation(COORD_MIN_X, COORD_MAX_X, COORD_MIN_Y, COORD_MAX_Y);
+  var tempLocation = getRandomLocation(COORD);
   ad.author = getAuthor(number);
   ad.offer = new GetOffer(tempLocation);
   ad.location = tempLocation;
