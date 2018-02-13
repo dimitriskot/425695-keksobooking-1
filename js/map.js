@@ -1,14 +1,19 @@
 'use strict';
 
 var map = document.querySelector('.map');
-map.classList.remove('map--faded');
-var similarMapPinElement = map.querySelector('.map__pins');
-var similarMapPinTemplate = document.querySelector('template').content.querySelector('.map__pin');
-var similarArticleTemplate = document.querySelector('template').content.querySelector('.map__card');
+var mainPin = map.querySelector('.map__pin--main');
+var noticeForm = document.querySelector('.notice__form');
+// map.classList.remove('map--faded');
+var fieldsets = document.querySelectorAll('fieldset');
+var pinSet = map.querySelector('.map__pins');
+var pinTemplate = document.querySelector('template').content.querySelector('.map__pin');
+var articleTemplate = document.querySelector('template').content.querySelector('.map__card');
 var fragment = document.createDocumentFragment();
 var ADS_COUNT = 8;
 var MIN_PRICE = 1000;
 var MAX_PRICE = 1000000;
+var MAIN_PIN_HALF_WIDTH = 31;
+var MAIN_PIN_HEIGHT = 82;
 var PIN_HALF_WIDTH = 20;
 var PIN_HEIGHT = 62;
 var COORD = {
@@ -19,8 +24,10 @@ var COORD = {
 };
 var COUNT_ROOMS = 5;
 var COUNT_GUESTS = 10;
+var ESC_KEYCODE = 27;
+var ENTER_KEYCODE = 13;
 
-var HOUSE_TITLES = [
+var ARTICLE_TITLES = [
   'Большая уютная квартира',
   'Маленькая неуютная квартира',
   'Огромный прекрасный дворец',
@@ -63,6 +70,16 @@ var FEATURES_LIST = [
   'elevator',
   'conditioner'
 ];
+
+// функция переключения активного состояния элементов массива
+var toggleDisabledOfArrayEL = function (collection) {
+  collection.forEach(function (item) {
+    item.disabled = item.disabled ? false : true;
+  });
+};
+
+// добавление атрибута disabled полям формы
+toggleDisabledOfArrayEL(fieldsets);
 
 // получение пути к файлу с аватаркой
 var getAvatarPath = function (userNumber) {
@@ -125,7 +142,7 @@ var getRandomArrayFromExisting = function (array) {
 
 // получение информации об объявлении
 var GetOffer = function (location) {
-  this.title = getRandomArrayElement(HOUSE_TITLES);
+  this.title = getRandomArrayElement(ARTICLE_TITLES);
   this.address = location.x + ', ' + location.y;
   this.price = getRandomNumberFromRange(MIN_PRICE, MAX_PRICE);
   this.type = getRandomArrayElement(HOUSE_TYPES);
@@ -149,18 +166,21 @@ var getAd = function (number) {
 };
 
 // генерация метки на карте для объявления
-var renderMapPin = function (ad) {
-  var mapPinElement = similarMapPinTemplate.cloneNode(true);
-  mapPinElement.style.top = ad.location.y + 'px';
-  mapPinElement.style.left = ad.location.x + 'px';
-  mapPinElement.querySelector('img').src = ad.author.avatar;
-  fragment.appendChild(mapPinElement);
-  similarMapPinElement.appendChild(fragment);
+var renderMapPin = function (collection) {
+  for (var i = 0; i < collection.length; i++) {
+    var mapPinElement = pinTemplate.cloneNode(true);
+    mapPinElement.style.top = collection[i].location.y + 'px';
+    mapPinElement.style.left = collection[i].location.x + 'px';
+    mapPinElement.querySelector('img').src = collection[i].author.avatar;
+    mapPinElement.id = 'pin-' + i;
+    fragment.appendChild(mapPinElement);
+    pinSet.appendChild(fragment);
+  }
 };
 
 // удаление списка характеристик жилища из шаблона
 (function () {
-  var popup = similarArticleTemplate.querySelector('.popup__features');
+  var popup = articleTemplate.querySelector('.popup__features');
   while (popup.firstChild) {
     popup.removeChild(popup.firstChild);
   }
@@ -179,7 +199,7 @@ var getFeatures = function (adNumber, element) {
 
 // получение карточки объявления
 var renderArticle = function (adNumber) {
-  var article = similarArticleTemplate.cloneNode(true);
+  var article = articleTemplate.cloneNode(true);
   article.querySelector('h3').textContent = adNumber.offer.title;
   article.querySelector('small').textContent = adNumber.offer.address;
   article.querySelector('.popup__price').textContent = adNumber.offer.price + String.fromCharCode(8381) + '/ночь';
@@ -195,13 +215,118 @@ var renderArticle = function (adNumber) {
 
 // получение массива объявлений
 var getAds = function (count) {
-  var ads = [];
+  var adsArray = [];
   for (var i = 0; i < count; i++) {
-    ads[i] = getAd(i);
-    renderMapPin(ads[i]);
+    adsArray[i] = getAd(i);
+    renderMapPin(adsArray[i]);
   }
-  fragment.appendChild(renderArticle(ads[0]));
-  map.appendChild(fragment);
+  return adsArray;
 };
 
-getAds(ADS_COUNT);
+// создание массива объявлений
+var ads = getAds(ADS_COUNT);
+
+// получение начальных координат главной метки
+var getMainPinStartCoords = function () {
+  var formAddress = noticeForm.querySelector('#address');
+  var startCoords = {
+    x: mainPin.offsetLeft + MAIN_PIN_HALF_WIDTH,
+    y: mainPin.offsetTop + MAIN_PIN_HEIGHT
+  };
+  formAddress.value = startCoords.x + ', ' + startCoords.y;
+};
+
+// функция активации страницы
+var activatePage = function () {
+  map.classList.remove('map--faded');
+  noticeForm.classList.remove('notice__form--disabled');
+  toggleDisabledOfArrayEL(fieldsets);
+  renderMapPin(ads);
+  getMainPinStartCoords();
+};
+
+// функция проверки нажатия Enter на главной метке
+var mainPinEnter = function (evt) {
+  if (evt.keyCode === ENTER_KEYCODE) {
+    activatePage();
+  }
+};
+
+// событие активации страницы при отпускании главной метки
+mainPin.addEventListener('mouseup', activatePage);
+
+// событие активации страницы при нажатии Enter
+mainPin.addEventListener('keydown', mainPinEnter);
+
+// создание информации об объявлении
+var createPopup = function (number) {
+  fragment.appendChild(renderArticle(ads[number]));
+  map.appendChild(fragment);
+  // создание события закрытия окна информации по клику и по нажатию на Enter
+  var closePopupButton = map.querySelector('.popup__close');
+  closePopupButton.addEventListener('click', closeCurrentAd);
+  closePopupButton.addEventListener('keydown', function (evt) {
+    if (evt.keyCode === ENTER_KEYCODE) {
+      closeCurrentAd(event);
+    }
+  });
+};
+
+// проверка нажатия клавиши Esc
+var checkKey = function (event) {
+  if (event.keyCode === ESC_KEYCODE) {
+    closeCurrentAd(event);
+  }
+};
+
+// удаление класса ..--active у метки
+var deactivatePin = function () {
+  if (document.querySelector('.map__pin--active')) {
+    var pinActive = document.querySelector('.map__pin--active');
+    pinActive.classList.remove('map__pin--active');
+  }
+};
+
+// удаление информации об объявлении
+var closePopup = function () {
+  if (document.querySelector('.map__card')) {
+    var mapCard = document.querySelector('.map__card');
+    map.removeChild(mapCard);
+  }
+};
+
+// закрытие текущей информации об объявлении
+var closeCurrentAd = function (event) {
+  closePopup();
+  deactivatePin();
+  document.removeEventListener('keydown', checkKey);
+  event.stopPropagation();
+};
+
+// открытие информации об объявлении
+var openPopup = function (event) {
+  var target = event.target;
+  var pinId;
+  document.addEventListener('keydown', checkKey);
+  while (target !== map) {
+    if (target.className === 'map__pin') {
+      closePopup();
+      deactivatePin();
+      target.classList.add('map__pin--active');
+      pinId = target.id.replace('pin-', '');
+      createPopup(pinId, event);
+      return;
+    }
+    target = target.parentNode;
+  }
+};
+
+// событие открытия информации об объявлении по клику
+map.addEventListener('click', openPopup);
+
+// событие открытия информации об объявлении по нажатию Enter
+map.addEventListener('keydown', function (event) {
+  if (event.keyCode === ENTER_KEYCODE) {
+    openPopup(event);
+  }
+});
