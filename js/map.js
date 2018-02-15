@@ -3,7 +3,15 @@
 var map = document.querySelector('.map');
 var mainPin = map.querySelector('.map__pin--main');
 var noticeForm = document.querySelector('.notice__form');
-// map.classList.remove('map--faded');
+var type = noticeForm.querySelector('#type');
+var price = noticeForm.querySelector('#price');
+var formTypes = type.children;
+var timeIn = noticeForm.querySelector('#timein');
+var timeOut = noticeForm.querySelector('#timeout');
+var firstTimes = timeIn.children;
+var secondTimes = timeOut.children;
+var roomNumber = noticeForm.querySelector('#room_number');
+var capacity = noticeForm.querySelector('#capacity');
 var fieldsets = document.querySelectorAll('fieldset');
 var pinSet = map.querySelector('.map__pins');
 var pinTemplate = document.querySelector('template').content.querySelector('.map__pin');
@@ -14,6 +22,10 @@ var MIN_PRICE = 1000;
 var MAX_PRICE = 1000000;
 var MAIN_PIN_HALF_WIDTH = 31;
 var MAIN_PIN_HEIGHT = 82;
+var MAIN_PIN_START_COORDS = {
+  x: mainPin.offsetLeft,
+  y: mainPin.offsetTop
+};
 var PIN_HALF_WIDTH = 20;
 var PIN_HEIGHT = 62;
 var COORD = {
@@ -26,6 +38,8 @@ var COUNT_ROOMS = 5;
 var COUNT_GUESTS = 10;
 var ESC_KEYCODE = 27;
 var ENTER_KEYCODE = 13;
+var MIN_PIN_COORD = 125;
+var MAX_PIN_COORD = 650;
 
 var AD_INFO_TITLES = [
   'Большая уютная квартира',
@@ -70,6 +84,31 @@ var FEATURES_LIST = [
   'elevator',
   'conditioner'
 ];
+
+var MIN_TYPE_PRICES = [
+  '1000',
+  '0',
+  '5000',
+  '10000'
+];
+
+var ROOM_CAPACITY = {
+  '1': [
+    {value: 1, text: 'для 1 гостя'}
+  ],
+  '2': [
+    {value: 1, text: 'для 1 гостя'},
+    {value: 2, text: 'для 2 гостей'}
+  ],
+  '3': [
+    {value: 1, text: 'для 1 гостя'},
+    {value: 2, text: 'для 2 гостей'},
+    {value: 3, text: 'для 3 гостей'}
+  ],
+  '100': [
+    {value: 0, text: 'не для гостей'}
+  ]
+};
 
 // функция переключения активного состояния элементов массива
 var toggleDisabled = function (collection) {
@@ -228,14 +267,14 @@ var getAds = function (count) {
 // создание массива объявлений
 var ads = getAds(ADS_COUNT);
 
-// получение начальных координат главной метки
-var getMainPinStartCoords = function () {
+// получение координат главной метки
+var getMainPinCoords = function (coords) {
   var formAddress = noticeForm.querySelector('#address');
-  var startCoords = {
-    x: mainPin.offsetLeft + MAIN_PIN_HALF_WIDTH,
-    y: mainPin.offsetTop + MAIN_PIN_HEIGHT
+  var mainPinCoords = {
+    x: coords.x + MAIN_PIN_HALF_WIDTH,
+    y: coords.y + MAIN_PIN_HEIGHT
   };
-  formAddress.value = startCoords.x + ', ' + startCoords.y;
+  formAddress.value = mainPinCoords.x + ', ' + mainPinCoords.y;
 };
 
 // событие активации страницы при отпускании главной метки
@@ -243,8 +282,10 @@ var onMainPinMouseUp = function () {
   map.classList.remove('map--faded');
   noticeForm.classList.remove('notice__form--disabled');
   toggleDisabled(fieldsets);
-  getMainPinStartCoords();
+  getMainPinCoords(MAIN_PIN_START_COORDS);
   renderPin(ads);
+  syncForm();
+  mainPin.addEventListener('mousedown', dragMainPin);
 };
 
 // событие активации страницы при нажатии Enter
@@ -335,3 +376,127 @@ map.addEventListener('click', onPinClick);
 
 // событие открытия информации об объявлении по нажатию Enter
 map.addEventListener('keydown', onPinEnterPress);
+
+// функция перетаскивания главной метки
+var dragMainPin = function (event) {
+  event.preventDefault();
+  var pinCoords;
+  var startCoords = {
+    x: event.clientX,
+    y: event.clientY
+  };
+  var onMouseMove = function (moveEvent) {
+    moveEvent.preventDefault();
+    var shift = {
+      x: startCoords.x - moveEvent.clientX,
+      y: startCoords.y - moveEvent.clientY
+    };
+    startCoords = {
+      x: moveEvent.clientX,
+      y: moveEvent.clientY
+    };
+    if (mainPin.offsetTop - shift.y < MIN_PIN_COORD) {
+      mainPin.style.top = MIN_PIN_COORD + 'px';
+    } else if (mainPin.offsetTop - shift.y > MAX_PIN_COORD) {
+      mainPin.style.top = MAX_PIN_COORD + 'px';
+    }
+    mainPin.style.top = (mainPin.offsetTop - shift.y) + 'px';
+    mainPin.style.left = (mainPin.offsetLeft - shift.x) + 'px';
+    pinCoords = {
+      x: mainPin.offsetLeft - shift.x,
+      y: mainPin.offsetTop - shift.y
+    };
+  };
+  var onMouseUp = function (upEvent) {
+    upEvent.preventDefault();
+    map.removeEventListener('mousemove', onMouseMove);
+    document.removeEventListener('mouseup', onMouseUp);
+    getMainPinCoords(pinCoords);
+  };
+  map.addEventListener('mousemove', onMouseMove);
+  document.addEventListener('mouseup', onMouseUp);
+};
+
+// функция синхронизации полей формы
+var synchronizeFields = function (secondElement, firstArray, secondArray, callback) {
+  for (var i = 0; i < firstArray.length; i++) {
+    if (firstArray[i].selected) {
+      var item = secondArray[i];
+      if (typeof callback === 'function') {
+        callback(secondElement, item);
+      }
+    }
+  }
+};
+
+// функция синхронизации типа жилья и минимальной цены
+var syncMinPrice = function (element, item) {
+  element.min = item;
+};
+
+// функция синхронизации полей формы
+var syncFormElement = function (element, item) {
+  element.value = item.value;
+};
+
+// событие синхронизации типа жилья и минимальной цены
+var onTypeChange = function () {
+  synchronizeFields(price, formTypes, MIN_TYPE_PRICES, syncMinPrice);
+};
+
+// событие синхронизации времени выезда со временем заезда
+var onTimeInChange = function () {
+  synchronizeFields(timeOut, firstTimes, secondTimes, syncFormElement);
+};
+
+// событие синхронизации времени заезда со временем выезда
+var onTimeOutChange = function () {
+  synchronizeFields(timeIn, secondTimes, firstTimes, syncFormElement);
+};
+
+// удаление значений вместимости комнат
+var clearCapacity = function () {
+  while (capacity.firstChild) {
+    capacity.removeChild(capacity.firstChild);
+  }
+};
+
+// генерация значений вместимости комнат
+var renderCapacity = function (value) {
+  for (var i = 0; i < ROOM_CAPACITY[value].length; i++) {
+    var capacityItem = document.createElement('option');
+    capacityItem.textContent = ROOM_CAPACITY[value][i].text;
+    capacityItem.value = ROOM_CAPACITY[value][i].value;
+    capacity.appendChild(capacityItem);
+  }
+};
+
+// событие синхронизации количества комнат с количеством гостей
+var onRoomNumberChange = function () {
+  var roomNumbers = roomNumber.children;
+  clearCapacity();
+  for (var i = 0; i < roomNumbers.length; i++) {
+    if (roomNumbers[i].selected) {
+      renderCapacity(roomNumber.value);
+    }
+  }
+};
+
+// функция синхронизации полей формы
+var syncForm = function () {
+  onTypeChange();
+  onTimeInChange();
+  onRoomNumberChange();
+};
+
+// событие смены значения поля Тип жилья
+type.addEventListener('change', onTypeChange);
+
+// событие смены значения поля Время заезда
+timeIn.addEventListener('change', onTimeInChange);
+
+// событие смены значения поля Время выезда
+timeOut.addEventListener('change', onTimeOutChange);
+
+// событие смены значения поля Кол-во комнат
+roomNumber.addEventListener('change', onRoomNumberChange);
