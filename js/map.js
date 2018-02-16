@@ -8,8 +8,8 @@ var price = noticeForm.querySelector('#price');
 var formTypes = type.children;
 var timeIn = noticeForm.querySelector('#timein');
 var timeOut = noticeForm.querySelector('#timeout');
-var firstTimes = timeIn.children;
-var secondTimes = timeOut.children;
+var timeInOptions = timeIn.children;
+var timeOutOptions = timeOut.children;
 var roomNumber = noticeForm.querySelector('#room_number');
 var capacity = noticeForm.querySelector('#capacity');
 var fieldsets = document.querySelectorAll('fieldset');
@@ -85,29 +85,38 @@ var FEATURES_LIST = [
   'conditioner'
 ];
 
-var MIN_TYPE_PRICES = [
+var MIN_PRICES_OF_TYPE = [
   '1000',
   '0',
   '5000',
   '10000'
 ];
 
+var ONE_ROOM = {
+  value: 1,
+  text: 'для 1 гостя'
+};
+
+var TWO_ROOM = {
+  value: 2,
+  text: 'для 2 гостей'
+};
+
+var THREE_ROOM = {
+  value: 2,
+  text: 'для 2 гостей'
+};
+
+var ONE_HUNDRED_ROOM = {
+  value: 0,
+  text: 'не для гостей'
+};
+
 var ROOM_CAPACITY = {
-  '1': [
-    {value: 1, text: 'для 1 гостя'}
-  ],
-  '2': [
-    {value: 1, text: 'для 1 гостя'},
-    {value: 2, text: 'для 2 гостей'}
-  ],
-  '3': [
-    {value: 1, text: 'для 1 гостя'},
-    {value: 2, text: 'для 2 гостей'},
-    {value: 3, text: 'для 3 гостей'}
-  ],
-  '100': [
-    {value: 0, text: 'не для гостей'}
-  ]
+  '1': [ONE_ROOM],
+  '2': [ONE_ROOM, TWO_ROOM],
+  '3': [ONE_ROOM, TWO_ROOM, THREE_ROOM],
+  '100': [ONE_HUNDRED_ROOM]
 };
 
 // функция переключения активного состояния элементов массива
@@ -205,7 +214,7 @@ var getAd = function (number) {
 };
 
 // генерация метки на карте для объявления
-var renderPin = function (collection) {
+var renderPins = function (collection) {
   for (var i = 0; i < collection.length; i++) {
     var mapPinElement = pinTemplate.cloneNode(true);
     mapPinElement.style.top = collection[i].location.y + 'px';
@@ -259,7 +268,7 @@ var getAds = function (count) {
   var tempAds = [];
   for (var i = 0; i < count; i++) {
     tempAds[i] = getAd(i);
-    renderPin(tempAds[i]);
+    renderPins(tempAds[i]);
   }
   return tempAds;
 };
@@ -283,8 +292,8 @@ var onMainPinMouseUp = function () {
   noticeForm.classList.remove('notice__form--disabled');
   toggleDisabled(fieldsets);
   getMainPinCoords(MAIN_PIN_START_COORDS);
-  renderPin(ads);
-  syncForm();
+  renderPins(ads);
+  syncFormInputs();
   mainPin.addEventListener('mousedown', dragMainPin);
 };
 
@@ -406,6 +415,7 @@ var dragMainPin = function (event) {
       x: mainPin.offsetLeft - shift.x,
       y: mainPin.offsetTop - shift.y
     };
+    getMainPinCoords(pinCoords);
   };
   var onMouseUp = function (upEvent) {
     upEvent.preventDefault();
@@ -417,52 +427,67 @@ var dragMainPin = function (event) {
   document.addEventListener('mouseup', onMouseUp);
 };
 
+// функция получения массива значений пунктов списка формы
+var getValues = function (formOptions) {
+  var values = [];
+  for (var i = 0; i < formOptions.length; i++) {
+    values[i] = formOptions[i].value;
+  }
+  return values;
+};
+
+// получение массива значений времён заезда
+var timesIn = getValues(timeInOptions);
+
+// получение массива значений времён выезда
+var timesOut = getValues(timeOutOptions);
+
 // функция синхронизации полей формы
-var synchronizeFields = function (secondElement, firstArray, secondArray, callback) {
-  for (var i = 0; i < firstArray.length; i++) {
-    if (firstArray[i].selected) {
-      var item = secondArray[i];
+var synchronizeFields = function (targetElement, sourceValues, targetValues, callback) {
+  for (var i = 0; i < sourceValues.length; i++) {
+    if (sourceValues[i].selected) {
+      var targetValue = targetValues[i];
       if (typeof callback === 'function') {
-        callback(secondElement, item);
+        callback(targetElement, targetValue);
       }
     }
   }
 };
 
-// функция синхронизации типа жилья и минимальной цены
-var syncMinPrice = function (element, item) {
-  element.min = item;
+// функция синхронизации минимального значения поля формы
+var syncInputMinValue = function (element, value) {
+  element.min = value;
 };
 
-// функция синхронизации полей формы
-var syncFormElement = function (element, item) {
-  element.value = item.value;
+// функция синхронизации значения поля формы
+var syncInputValue = function (element, value) {
+  element.value = value;
 };
 
 // событие синхронизации типа жилья и минимальной цены
 var onTypeChange = function () {
-  synchronizeFields(price, formTypes, MIN_TYPE_PRICES, syncMinPrice);
+  synchronizeFields(price, formTypes, MIN_PRICES_OF_TYPE, syncInputMinValue);
 };
 
 // событие синхронизации времени выезда со временем заезда
 var onTimeInChange = function () {
-  synchronizeFields(timeOut, firstTimes, secondTimes, syncFormElement);
+  synchronizeFields(timeOut, timeInOptions, timesOut, syncInputValue);
 };
 
 // событие синхронизации времени заезда со временем выезда
 var onTimeOutChange = function () {
-  synchronizeFields(timeIn, secondTimes, firstTimes, syncFormElement);
+  synchronizeFields(timeIn, timeOutOptions, timesIn, syncInputValue);
 };
 
 // удаление значений вместимости комнат
-var clearCapacity = function () {
+var clearRoomCapacities = function () {
   while (capacity.firstChild) {
     capacity.removeChild(capacity.firstChild);
   }
 };
 
 // генерация значений вместимости комнат
-var renderCapacity = function (value) {
+var getRoomCapacities = function (value) {
   for (var i = 0; i < ROOM_CAPACITY[value].length; i++) {
     var capacityItem = document.createElement('option');
     capacityItem.textContent = ROOM_CAPACITY[value][i].text;
@@ -474,16 +499,16 @@ var renderCapacity = function (value) {
 // событие синхронизации количества комнат с количеством гостей
 var onRoomNumberChange = function () {
   var roomNumbers = roomNumber.children;
-  clearCapacity();
+  clearRoomCapacities();
   for (var i = 0; i < roomNumbers.length; i++) {
     if (roomNumbers[i].selected) {
-      renderCapacity(roomNumber.value);
+      getRoomCapacities(roomNumber.value);
     }
   }
 };
 
 // функция синхронизации полей формы
-var syncForm = function () {
+var syncFormInputs = function () {
   onTypeChange();
   onTimeInChange();
   onRoomNumberChange();
