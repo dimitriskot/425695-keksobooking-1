@@ -125,14 +125,7 @@
       }
     }
   };
-/*
-  // функция синхронизации полей формы
-  (function () {
-    onTypeChange();
-    onTimeInChange();
-    onRoomNumberChange();
-  })();
-*/
+
   // событие смены значения поля Тип жилья
   type.addEventListener('change', onTypeChange);
 

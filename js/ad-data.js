@@ -97,7 +97,6 @@
     var tempAds = [];
     for (var i = 0; i < count; i++) {
       tempAds[i] = getAd(i);
-      // window.pins.renderPins(tempAds[i]);
     }
     return tempAds;
   };

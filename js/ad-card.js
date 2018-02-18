@@ -7,14 +7,6 @@
     bungalo: 'Бунгало'
   };
 
-  // удаление списка характеристик жилища из шаблона
-  (function () {
-    var popup = window.variables.adCardTemplate.querySelector('.popup__features');
-    while (popup.firstChild) {
-      popup.removeChild(popup.firstChild);
-    }
-  })();
-
   // получение характеристик жилища
   var getFeatures = function (adNumber, element) {
     for (var j = 0; j < adNumber.offer.features.length; j++) {
