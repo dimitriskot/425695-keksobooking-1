@@ -28,8 +28,8 @@
   };
 
   var THREE_GUESTS = {
-    value: 2,
-    text: 'для 2 гостей'
+    value: 3,
+    text: 'для 3 гостей'
   };
 
   var NO_GUESTS = {
@@ -125,14 +125,14 @@
       }
     }
   };
-
+/*
   // функция синхронизации полей формы
   (function () {
     onTypeChange();
     onTimeInChange();
     onRoomNumberChange();
   })();
-
+*/
   // событие смены значения поля Тип жилья
   type.addEventListener('change', onTypeChange);
 

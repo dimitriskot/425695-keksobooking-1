@@ -19,7 +19,7 @@
   var getFeatures = function (adNumber, element) {
     for (var j = 0; j < adNumber.offer.features.length; j++) {
       var item = document.createElement('li');
-      item.className = 'feature';
+      item.classList.add('feature');
       item.classList.add('feature--' + adNumber.offer.features[j]);
       window.variables.fragment.appendChild(item);
       element.querySelector('.popup__features').appendChild(window.variables.fragment);
