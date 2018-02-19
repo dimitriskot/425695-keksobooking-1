@@ -13,7 +13,6 @@
     window.util.toggleDisabled(window.variables.fieldsets);
     getMainPinCoords(MAIN_PIN_START_COORDS);
     window.pins.renderPins(window.variables.ads);
-    window.variables.mainPin.addEventListener('mousedown', dragMainPin);
   };
 
   // получение координат главной метки
@@ -62,20 +61,23 @@
         x: window.variables.mainPin.offsetLeft - shift.x,
         y: window.variables.mainPin.offsetTop - shift.y
       };
-      getMainPinCoords(pinCoords);
+      if (!window.variables.map.classList.contains('map--faded')) {
+        getMainPinCoords(pinCoords);
+      }
     };
     var onMouseUp = function (upEvent) {
       upEvent.preventDefault();
       window.variables.map.removeEventListener('mousemove', onMouseMove);
       document.removeEventListener('mouseup', onMouseUp);
+      onMainPinMouseUp();
       getMainPinCoords(pinCoords);
     };
     window.variables.map.addEventListener('mousemove', onMouseMove);
     document.addEventListener('mouseup', onMouseUp);
   };
 
-  // обработчик события активации страницы при отпускании главной метки
-  window.variables.mainPin.addEventListener('mouseup', onMainPinMouseUp);
+  // обработчик события перетаскивания главной метки
+  window.variables.mainPin.addEventListener('mousedown', dragMainPin);
 
   // обработчик события активации страницы при нажатии Enter
   window.variables.mainPin.addEventListener('keydown', onMainPinEnterPress);
