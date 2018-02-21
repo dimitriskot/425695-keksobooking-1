@@ -2,8 +2,8 @@
 
 (function () {
   var MAIN_PIN_START_COORDS = {
-    x: window.variables.mainPin.offsetLeft,
-    y: window.variables.mainPin.offsetTop
+    x: window.variables.mainPin.offsetLeft + window.constants.MAIN_PIN_HALF_WIDTH,
+    y: window.variables.mainPin.offsetTop + window.constants.MAIN_PIN_HEIGHT
   };
 
   // событие активации страницы при отпускании главной метки
@@ -51,9 +51,11 @@
         y: moveEvent.clientY
       };
       if (window.variables.mainPin.offsetTop - shift.y < window.constants.MIN_PIN_COORD) {
-        window.variables.mainPin.style.top = window.constants.MIN_PIN_COORD + 'px';
-      } else if (window.variables.mainPin.offsetTop - shift.y > window.constants.MAX_PIN_COORD) {
-        window.variables.mainPin.style.top = window.constants.MAX_PIN_COORD + 'px';
+        startCoords.y = window.constants.MIN_PIN_COORD;
+        shift.y = 0;
+      } else if (window.variables.mainPin.offsetTop - shift.y > window.constants.MAX_PIN_COORD - window.constants.MAIN_PIN_HEIGHT) {
+        startCoords.y = window.constants.MAX_PIN_COORD - window.constants.MAIN_PIN_HEIGHT;
+        shift.y = 0;
       }
       window.variables.mainPin.style.top = (window.variables.mainPin.offsetTop - shift.y) + 'px';
       window.variables.mainPin.style.left = (window.variables.mainPin.offsetLeft - shift.x) + 'px';
@@ -67,6 +69,10 @@
     };
     var onMouseUp = function (upEvent) {
       upEvent.preventDefault();
+      pinCoords = {
+        x: window.variables.mainPin.offsetLeft,
+        y: window.variables.mainPin.offsetTop
+      };
       window.variables.map.removeEventListener('mousemove', onMouseMove);
       document.removeEventListener('mouseup', onMouseUp);
       onMainPinMouseUp();
