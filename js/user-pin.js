@@ -7,7 +7,7 @@
     window.variables.noticeForm.classList.remove('notice__form--disabled');
     window.util.toggleDisabled(window.variables.fieldsets);
     getMainPinCoords(window.constants.MAIN_PIN_START_COORDS);
-    window.backend.load(window.pins.renderPins, window.util.getInfoPopup);
+    window.backend.load(window.adData.loadAds, window.util.getInfoPopup);
   };
 
   // получение координат главной метки

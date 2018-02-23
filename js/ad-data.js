@@ -101,5 +101,15 @@
     return tempAds;
   };
 
-  window.variables.ads = getAds(ADS_COUNT);
+  // функция создания массива объявлений из загруженных с сервера данных
+  var loadAds = function (collection) {
+    window.variables.ads = collection;
+    window.pins.renderPins(collection);
+  };
+
+  window.adData = {
+    loadAds: loadAds,
+  };
+
+  // window.variables.ads = getAds(ADS_COUNT);
 })();
