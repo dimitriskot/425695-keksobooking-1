@@ -1,7 +1,7 @@
 'use strict';
 
 (function () {
-  var ADS_COUNT = 8;
+  // var ADS_COUNT = 8;
   var COUNT_ROOMS = 5;
   var COUNT_GUESTS = 10;
   var MIN_PRICE = 1000;
@@ -108,8 +108,7 @@
   };
 
   window.adData = {
-    loadAds: loadAds,
+    getAds: getAds,
+    loadAds: loadAds
   };
-
-  // window.variables.ads = getAds(ADS_COUNT);
 })();

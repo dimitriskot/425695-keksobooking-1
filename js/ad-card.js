@@ -36,7 +36,6 @@
 
   // создание карточки объявления
   var getAdCard = function (number) {
-    console.log(window.variables.ads);
     window.variables.fragment.appendChild(renderAdCard(window.variables.ads[number]));
     window.variables.map.appendChild(window.variables.fragment);
     // создание события закрытия окна информации по клику и по нажатию на Enter
