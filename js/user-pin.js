@@ -1,18 +1,13 @@
 'use strict';
 
 (function () {
-  var MAIN_PIN_START_COORDS = {
-    x: window.variables.mainPin.offsetLeft + window.constants.MAIN_PIN_HALF_WIDTH,
-    y: window.variables.mainPin.offsetTop + window.constants.MAIN_PIN_HEIGHT
-  };
-
   // событие активации страницы при отпускании главной метки
   var onMainPinMouseUp = function () {
     window.variables.map.classList.remove('map--faded');
     window.variables.noticeForm.classList.remove('notice__form--disabled');
     window.util.toggleDisabled(window.variables.fieldsets);
-    getMainPinCoords(MAIN_PIN_START_COORDS);
-    window.pins.renderPins(window.variables.ads);
+    getMainPinCoords(window.constants.MAIN_PIN_START_COORDS);
+    window.backend.load(window.pins.renderPins, window.util.getInfoPopup);
   };
 
   // получение координат главной метки
@@ -75,7 +70,9 @@
       };
       window.variables.map.removeEventListener('mousemove', onMouseMove);
       document.removeEventListener('mouseup', onMouseUp);
-      onMainPinMouseUp();
+      if (window.variables.map.classList.contains('map--faded')) {
+        onMainPinMouseUp();
+      }
       getMainPinCoords(pinCoords);
     };
     window.variables.map.addEventListener('mousemove', onMouseMove);
@@ -89,6 +86,7 @@
   window.variables.mainPin.addEventListener('keydown', onMainPinEnterPress);
 
   window.userPin = {
+    getMainPinCoords: getMainPinCoords,
     onMainPinMouseUp: onMainPinMouseUp,
     onMainPinEnterPress: onMainPinEnterPress
   };

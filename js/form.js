@@ -10,6 +10,7 @@
   var timeOutOptions = timeOut.children;
   var roomNumber = window.variables.noticeForm.querySelector('#room_number');
   var capacity = window.variables.noticeForm.querySelector('#capacity');
+  var formResetButton = window.variables.noticeForm.querySelector('.form__reset');
   var MIN_PRICES_OF_TYPE = [
     '1000',
     '0',
@@ -137,4 +138,26 @@
 
   // событие смены значения поля Кол-во комнат
   roomNumber.addEventListener('change', onRoomNumberChange);
+
+  // функция сброса формы к исходному состоянию
+  var resetForm = function (evt) {
+    window.variables.noticeForm.reset();
+    if (evt.target !== formResetButton) {
+      window.util.getInfoPopup('Данные успешно отправлены!');
+    }
+    window.pins.deletePins();
+    window.variables.map.classList.add('map--faded');
+    window.variables.noticeForm.classList.add('notice__form--disabled');
+    window.util.toggleDisabled(window.variables.fieldsets);
+    window.variables.mainPin.style.left = window.constants.MAIN_PIN_START_COORDS.x + 'px';
+    window.variables.mainPin.style.top = window.constants.MAIN_PIN_START_COORDS.y + 'px';
+  };
+
+  var upLoadFormData = function (evt) {
+    evt.preventDefault();
+    window.backend.upload(new FormData(window.variables.noticeForm), resetForm, window.util.getInfoPopup);
+  };
+
+  window.variables.noticeForm.addEventListener('submit', upLoadFormData);
+  formResetButton.addEventListener('click', resetForm);
 })();
