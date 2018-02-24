@@ -58,8 +58,16 @@
     }
   };
 
+  var deletePins = function () {
+    var mapPins = window.variables.map.querySelector('.map__pins');
+    while (!mapPins.lastElementChild.classList.contains('map__pin--main')) {
+      mapPins.removeChild(mapPins.lastElementChild);
+    }
+  };
+
   window.pins = {
     renderPins: renderPins,
+    deletePins: deletePins,
     onPinClick: onPinClick,
     deactivatePin: deactivatePin,
     onPinEnterPress: onPinEnterPress,

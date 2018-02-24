@@ -1,7 +1,7 @@
 'use strict';
 
 (function () {
-  var ADS_COUNT = 8;
+  // var ADS_COUNT = 8;
   var COUNT_ROOMS = 5;
   var COUNT_GUESTS = 10;
   var MIN_PRICE = 1000;
@@ -101,5 +101,14 @@
     return tempAds;
   };
 
-  window.variables.ads = getAds(ADS_COUNT);
+  // функция создания массива объявлений из загруженных с сервера данных
+  var loadAds = function (collection) {
+    window.variables.ads = collection;
+    window.pins.renderPins(collection);
+  };
+
+  window.adData = {
+    getAds: getAds,
+    loadAds: loadAds
+  };
 })();

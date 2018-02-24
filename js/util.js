@@ -46,12 +46,28 @@
     });
   };
 
+  var getInfoPopup = function (message) {
+    var infoPopup = document.createElement('div');
+    infoPopup.classList.add('form-popup');
+    infoPopup.textContent = message;
+    document.body.insertAdjacentElement('afterbegin', infoPopup);
+    var infoPopupButton = document.createElement('button');
+    infoPopupButton.classList.add('form-popup__button');
+    infoPopupButton.textContent = 'OK';
+    var closePopup = function () {
+      document.body.removeChild(infoPopup);
+    };
+    infoPopupButton.addEventListener('click', closePopup);
+    infoPopup.appendChild(infoPopupButton);
+  };
+
   window.util = {
     getRandomArrayElement: getRandomArrayElement,
     getRandomNumber: getRandomNumber,
     getRandomNumberFromRange: getRandomNumberFromRange,
     getRandomLocation: getRandomLocation,
     getRandomArrayFromExisting: getRandomArrayFromExisting,
-    toggleDisabled: toggleDisabled
+    toggleDisabled: toggleDisabled,
+    getInfoPopup: getInfoPopup
   };
 })();
