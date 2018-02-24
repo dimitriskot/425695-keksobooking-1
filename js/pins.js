@@ -5,12 +5,18 @@
 
   // генерация метки на карте для объявления
   var renderPins = function (collection) {
-    for (var i = 0; i < collection.length; i++) {
+    var adNumber;
+    if (collection.length < window.constants.ADS_COUNT) {
+      adNumber = collection.length;
+    } else {
+      adNumber = window.constants.ADS_COUNT;
+    }
+    for (var i = 0; i < adNumber; i++) {
       var mapPinElement = window.variables.pinTemplate.cloneNode(true);
       mapPinElement.style.top = collection[i].location.y + 'px';
       mapPinElement.style.left = collection[i].location.x + 'px';
       mapPinElement.querySelector('img').src = collection[i].author.avatar;
-      mapPinElement.id = 'pin-' + i;
+      mapPinElement.id = 'pin-' + collection[i].id;
       window.variables.fragment.appendChild(mapPinElement);
       pinSet.appendChild(window.variables.fragment);
     }

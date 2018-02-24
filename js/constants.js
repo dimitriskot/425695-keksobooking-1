@@ -2,6 +2,7 @@
 
 (function () {
   window.constants = {
+    ADS_COUNT: 5,
     PIN_HALF_WIDTH: 20,
     PIN_HEIGHT: 62,
     MAIN_PIN_START_COORDS: {

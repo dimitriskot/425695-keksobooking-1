@@ -1,7 +1,6 @@
 'use strict';
 
 (function () {
-  // var ADS_COUNT = 8;
   var COUNT_ROOMS = 5;
   var COUNT_GUESTS = 10;
   var MIN_PRICE = 1000;
@@ -104,7 +103,14 @@
   // функция создания массива объявлений из загруженных с сервера данных
   var loadAds = function (collection) {
     window.variables.ads = collection;
-    window.pins.renderPins(collection);
+    window.variables.ads.map(function (ad, index) {
+      ad.rank = 0;
+      ad.id = index;
+      return ad;
+    });
+    window.variables.adsOnMap = window.variables.ads.slice();
+    window.variables.adsOnMap.length = window.constants.ADS_COUNT;
+    window.pins.renderPins(window.variables.adsOnMap);
   };
 
   window.adData = {

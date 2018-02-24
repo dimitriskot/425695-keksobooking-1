@@ -9,6 +9,7 @@
     fragment: document.createDocumentFragment(),
     pinTemplate: document.querySelector('template').content.querySelector('.map__pin'),
     noticeForm: document.querySelector('.notice__form'),
-    ads: []
+    ads: [],
+    adsOnMap: []
   };
 })();

@@ -2,11 +2,12 @@
 
 (function () {
   var URL = 'https://js.dump.academy/keksobooking';
+  var LOAD_TIMEOUT = 5000;
 
   var upload = function (data, onLoad, onError) {
     var xhr = new XMLHttpRequest();
     xhr.responseType = 'json';
-    xhr.timeout = 3000;
+    xhr.timeout = LOAD_TIMEOUT;
     xhr.addEventListener('load', function () {
       if (xhr.status === window.constants.OK_STATUS) {
         onLoad(xhr.response);
@@ -28,7 +29,7 @@
   var load = function (onLoad, onError, number) {
     var xhr = new XMLHttpRequest();
     xhr.responseType = 'json';
-    xhr.timeout = 5000;
+    xhr.timeout = LOAD_TIMEOUT;
     xhr.open('GET', URL + '/data');
     xhr.addEventListener('load', function () {
       if (xhr.status === window.constants.OK_STATUS) {
