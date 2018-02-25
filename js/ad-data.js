@@ -104,7 +104,6 @@
   var loadAds = function (collection) {
     window.variables.ads = collection;
     window.variables.ads.map(function (ad, index) {
-      ad.rank = 0;
       ad.id = index;
       return ad;
     });
