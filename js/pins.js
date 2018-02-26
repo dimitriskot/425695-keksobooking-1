@@ -5,12 +5,7 @@
 
   // генерация метки на карте для объявления
   var renderPins = function (collection) {
-    var adNumber;
-    if (collection.length < window.constants.ADS_COUNT) {
-      adNumber = collection.length;
-    } else {
-      adNumber = window.constants.ADS_COUNT;
-    }
+    var adNumber = Math.min(collection.length, window.constants.ADS_COUNT);
     for (var i = 0; i < adNumber; i++) {
       var mapPinElement = window.variables.pinTemplate.cloneNode(true);
       mapPinElement.style.top = collection[i].location.y + 'px';
