@@ -61,6 +61,22 @@
     infoPopup.appendChild(infoPopupButton);
   };
 
+  // функция сравнения массивов
+  var compareCollections = function (collection, comparableCollection) {
+    var count = 0;
+    for (var i = 0; i < collection.offer.features.length; i++) {
+      for (var j = 0; j < comparableCollection.length; j++) {
+        if (collection.offer.features[i] === comparableCollection[j]) {
+          count++;
+        }
+      }
+    }
+    if (count === comparableCollection.length) {
+      return collection;
+    }
+    return false;
+  };
+
   window.util = {
     getRandomArrayElement: getRandomArrayElement,
     getRandomNumber: getRandomNumber,
@@ -68,6 +84,7 @@
     getRandomLocation: getRandomLocation,
     getRandomArrayFromExisting: getRandomArrayFromExisting,
     toggleDisabled: toggleDisabled,
-    getInfoPopup: getInfoPopup
+    getInfoPopup: getInfoPopup,
+    compareCollections: compareCollections
   };
 })();

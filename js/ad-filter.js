@@ -66,30 +66,16 @@
     });
   };
 
-  // функция сравнения массивов удобств
-  var compareFeatures = function (ad) {
+  // функция проверки объявлений по фильтру удобств
+  var checkFeaturesFilter = function (adCollection) {
     var tempFilterFeatures;
     tempFilterFeatures = featuresFilter.filter(function (feature) {
       return feature.type === 'checkbox' && feature.checked;
+    }).map(function (feature) {
+      return feature.value;
     });
-    var count = 0;
-    for (var i = 0; i < ad.offer.features.length; i++) {
-      for (var j = 0; j < tempFilterFeatures.length; j++) {
-        if (ad.offer.features[i] === tempFilterFeatures[j].value) {
-          count++;
-        }
-      }
-    }
-    if (count === tempFilterFeatures.length) {
-      return ad;
-    }
-    return false;
-  };
-
-  // функция проверки объявлений по фильтру удобств
-  var checkFeaturesFilter = function (adCollection) {
     return adCollection.filter(function (ad) {
-      return ad === compareFeatures(ad);
+      return ad === window.util.compareCollections(ad, tempFilterFeatures);
     });
   };
 

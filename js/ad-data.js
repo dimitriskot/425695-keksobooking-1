@@ -108,7 +108,6 @@
       return ad;
     });
     window.variables.adsOnMap = window.variables.ads.slice();
-    window.variables.adsOnMap.length = window.constants.ADS_COUNT;
     window.pins.renderPins(window.variables.adsOnMap);
   };
 
