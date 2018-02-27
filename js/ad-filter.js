@@ -104,4 +104,19 @@
       feature.addEventListener('change', onFilterChange);
     }
   });
+
+  var resetFilters = function () {
+    typeFilter.value = FILTER_ANY;
+    priceFilter.value = FILTER_ANY;
+    roomsFilter.value = FILTER_ANY;
+    guestsFilter.value = FILTER_ANY;
+    featuresFilter.forEach(function (feature) {
+      feature.checked = false;
+      return feature;
+    });
+  };
+
+  window.adFilter = {
+    resetFilters: resetFilters
+  };
 })();

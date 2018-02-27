@@ -7,6 +7,7 @@
     window.variables.noticeForm.classList.remove('notice__form--disabled');
     window.util.toggleDisabled(window.variables.fieldsets);
     getMainPinCoords(window.constants.MAIN_PIN_START_COORDS);
+    window.adFilter.resetFilters();
     window.backend.load(window.adData.loadAds, window.util.getInfoPopup);
   };
 
