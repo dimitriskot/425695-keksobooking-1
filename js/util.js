@@ -72,7 +72,7 @@
       }
     }
     if (count === comparableCollection.length) {
-      return collection;
+      return true;
     }
     return false;
   };

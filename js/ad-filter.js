@@ -75,7 +75,7 @@
       return feature.value;
     });
     return adCollection.filter(function (ad) {
-      return ad === window.util.compareCollections(ad, tempFilterFeatures);
+      return window.util.compareCollections(ad, tempFilterFeatures) ? ad : null;
     });
   };
 
