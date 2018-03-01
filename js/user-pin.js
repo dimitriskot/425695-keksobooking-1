@@ -6,17 +6,18 @@
     window.variables.map.classList.remove('map--faded');
     window.variables.noticeForm.classList.remove('notice__form--disabled');
     window.util.toggleDisabled(window.variables.fieldsets);
-    getMainPinCoords(window.constants.MAIN_PIN_START_COORDS);
+    getMainPinCoords(window.constants.MAIN_PIN.COORDS_START);
     window.adFilter.resetFilters();
     window.backend.load(window.adData.loadAds, window.util.getInfoPopup);
+    console.log(window.variables.map.offsetLeft);
   };
 
   // получение координат главной метки
   var getMainPinCoords = function (coords) {
     var formAddress = window.variables.noticeForm.querySelector('#address');
     var mainPinCoords = {
-      x: coords.x + window.constants.MAIN_PIN_HALF_WIDTH,
-      y: coords.y + window.constants.MAIN_PIN_HEIGHT
+      x: coords.x + window.constants.MAIN_PIN.HALF_WIDTH,
+      y: coords.y + window.constants.MAIN_PIN.HEIGHT
     };
     formAddress.value = mainPinCoords.x + ', ' + mainPinCoords.y;
   };
@@ -46,13 +47,22 @@
         x: moveEvent.clientX,
         y: moveEvent.clientY
       };
-      if (window.variables.mainPin.offsetTop - shift.y < window.constants.MIN_PIN_COORD) {
-        startCoords.y = window.constants.MIN_PIN_COORD;
+      if (window.variables.mainPin.offsetTop - shift.y < window.constants.MAIN_PIN.COORDS_LIMIT.MIN_Y) {
+        startCoords.y = window.constants.MAIN_PIN.COORDS_LIMIT.MIN_Y;
         shift.y = 0;
-      } else if (window.variables.mainPin.offsetTop - shift.y > window.constants.MAX_PIN_COORD - window.constants.MAIN_PIN_HEIGHT) {
-        startCoords.y = window.constants.MAX_PIN_COORD - window.constants.MAIN_PIN_HEIGHT;
+      } else if (window.variables.mainPin.offsetTop - shift.y > window.constants.MAIN_PIN.COORDS_LIMIT.MAX_Y - window.constants.MAIN_PIN.HEIGHT) {
+        startCoords.y = window.constants.MAIN_PIN.COORDS_LIMIT.MAX_Y - window.constants.MAIN_PIN.HEIGHT;
         shift.y = 0;
       }
+      /*
+      else if (window.variables.mainPin.offsetLeft - shift.x < window.constants.MAIN_PIN.COORDS_LIMIT.MIN_X) {
+        startCoords.x = window.constants.MAIN_PIN.COORDS_LIMIT.MIN_X;
+        shift.x = 0;
+      } else if (window.variables.mainPin.offsetLeft - shift.x > window.constants.MAIN_PIN.COORDS_LIMIT.MAX_X - window.constants.MAIN_PIN.WIDTH) {
+        startCoords.x = window.constants.MAIN_PIN.COORDS_LIMIT.MAX_X - window.constants.MAIN_PIN.WIDTH;
+        shift.x = 0;
+      }
+      */
       window.variables.mainPin.style.top = (window.variables.mainPin.offsetTop - shift.y) + 'px';
       window.variables.mainPin.style.left = (window.variables.mainPin.offsetLeft - shift.x) + 'px';
       pinCoords = {

@@ -148,6 +148,7 @@
     window.pins.deletePins();
     window.variables.map.classList.add('map--faded');
     window.variables.noticeForm.classList.add('notice__form--disabled');
+    onRoomNumberChange();
     window.util.toggleDisabled(window.variables.fieldsets);
     window.variables.mainPin.style.left = window.constants.MAIN_PIN_START_COORDS.x + 'px';
     window.variables.mainPin.style.top = window.constants.MAIN_PIN_START_COORDS.y + 'px';

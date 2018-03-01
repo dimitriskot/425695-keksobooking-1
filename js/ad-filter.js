@@ -79,8 +79,12 @@
     });
   };
 
-  // событие фильтрации объявлений по выбранным параметрам
   var onFilterChange = function () {
+    window.debounce(getFilteredAds);
+  };
+
+  // событие фильтрации объявлений по выбранным параметрам
+  var getFilteredAds = function () {
     window.adCard.closeAdCard();
     filteredAds = window.variables.ads.slice();
     filteredAds = checkTypeFilter(filteredAds);
