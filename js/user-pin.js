@@ -9,7 +9,6 @@
     getMainPinCoords(window.constants.MAIN_PIN.COORDS_START);
     window.adFilter.resetFilters();
     window.backend.load(window.adData.loadAds, window.util.getInfoPopup);
-    console.log(window.variables.map.offsetLeft);
   };
 
   // получение координат главной метки
@@ -54,7 +53,6 @@
         startCoords.y = window.constants.MAIN_PIN.COORDS_LIMIT.MAX_Y - window.constants.MAIN_PIN.HEIGHT;
         shift.y = 0;
       }
-      /*
       else if (window.variables.mainPin.offsetLeft - shift.x < window.constants.MAIN_PIN.COORDS_LIMIT.MIN_X) {
         startCoords.x = window.constants.MAIN_PIN.COORDS_LIMIT.MIN_X;
         shift.x = 0;
@@ -62,7 +60,6 @@
         startCoords.x = window.constants.MAIN_PIN.COORDS_LIMIT.MAX_X - window.constants.MAIN_PIN.WIDTH;
         shift.x = 0;
       }
-      */
       window.variables.mainPin.style.top = (window.variables.mainPin.offsetTop - shift.y) + 'px';
       window.variables.mainPin.style.left = (window.variables.mainPin.offsetLeft - shift.x) + 'px';
       pinCoords = {
