@@ -52,8 +52,7 @@
       } else if (window.variables.mainPin.offsetTop - shift.y > window.constants.MAIN_PIN.COORDS_LIMIT.MAX_Y - window.constants.MAIN_PIN.HEIGHT) {
         startCoords.y = window.constants.MAIN_PIN.COORDS_LIMIT.MAX_Y - window.constants.MAIN_PIN.HEIGHT;
         shift.y = 0;
-      }
-      else if (window.variables.mainPin.offsetLeft - shift.x < window.constants.MAIN_PIN.COORDS_LIMIT.MIN_X) {
+      } else if (window.variables.mainPin.offsetLeft - shift.x < window.constants.MAIN_PIN.COORDS_LIMIT.MIN_X) {
         startCoords.x = window.constants.MAIN_PIN.COORDS_LIMIT.MIN_X;
         shift.x = 0;
       } else if (window.variables.mainPin.offsetLeft - shift.x > window.constants.MAIN_PIN.COORDS_LIMIT.MAX_X - window.constants.MAIN_PIN.WIDTH) {
