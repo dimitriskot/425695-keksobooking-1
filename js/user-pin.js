@@ -9,8 +9,6 @@
     getMainPinCoords(window.constants.MAIN_PIN.COORDS_START);
     window.adFilter.resetAll();
     window.backend.load(window.adData.loadFromServer, window.util.getInfoPopup);
-    console.log(window.variables.map.offsetLeft);
-    console.log(window.variables.map.offsetWidth);
   };
 
   // получение координат главной метки
