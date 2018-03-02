@@ -112,7 +112,7 @@
   };
 
   window.adData = {
-    getAds: getAds,
-    loadAds: loadAds
+    render: getAds,
+    loadFromServer: loadAds
   };
 })();

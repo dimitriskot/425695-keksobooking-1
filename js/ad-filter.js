@@ -1,6 +1,12 @@
 'use strict';
 
 (function () {
+  var FILTER_ANY = 'any';
+  var PRICE_LEVELS = {
+    low: 'low',
+    middle: 'middle',
+    high: 'high'
+  };
   var filteredAds = [];
   var typeFilter = window.variables.map.querySelector('#housing-type');
   var priceFilter = window.variables.map.querySelector('#housing-price');
@@ -8,12 +14,6 @@
   var guestsFilter = window.variables.map.querySelector('#housing-guests');
   var featuresFilter = window.variables.map.querySelector('#housing-features').children;
   featuresFilter = Array.prototype.slice.call(featuresFilter);
-  var FILTER_ANY = 'any';
-  var PRICE_LEVELS = {
-    low: 'low',
-    middle: 'middle',
-    high: 'high'
-  };
 
   // функция проверки объявлений по фильтру типа жилья
   var checkTypeFilter = function (adCollection) {
@@ -85,7 +85,7 @@
 
   // событие фильтрации объявлений по выбранным параметрам
   var getFilteredAds = function () {
-    window.adCard.closeAdCard();
+    window.adCard.hide();
     filteredAds = window.variables.ads.slice();
     filteredAds = checkTypeFilter(filteredAds);
     filteredAds = checkPriceFilter(filteredAds);
@@ -95,7 +95,7 @@
     window.pins.deletePins();
     window.pins.renderPins(filteredAds);
     filteredAds.forEach(function (filteredAd) {
-      window.adCard.renderAdCard(filteredAd);
+      window.adCard.render(filteredAd);
     });
   };
 
@@ -121,6 +121,6 @@
   };
 
   window.adFilter = {
-    resetFilters: resetFilters
+    resetAll: resetFilters
   };
 })();

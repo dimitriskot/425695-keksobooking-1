@@ -7,12 +7,12 @@
     PIN_HEIGHT: 62,
     MAIN_PIN: {
       COORDS_START: {
-        x: window.variables.mainPin.offsetLeft,
-        y: window.variables.mainPin.offsetTop
+        X: window.variables.mainPin.offsetLeft,
+        Y: window.variables.mainPin.offsetTop
       },
       COORDS_LIMIT: {
-        MIN_X: 0,
-        MAX_X: 1200,
+        MIN_X: 0, // window.variables.map.offsetLeft,
+        MAX_X: window.variables.map.offsetWidth,
         MIN_Y: 150,
         MAX_Y: 500
       },

@@ -7,8 +7,10 @@
     window.variables.noticeForm.classList.remove('notice__form--disabled');
     window.util.toggleDisabled(window.variables.fieldsets);
     getMainPinCoords(window.constants.MAIN_PIN.COORDS_START);
-    window.adFilter.resetFilters();
-    window.backend.load(window.adData.loadAds, window.util.getInfoPopup);
+    window.adFilter.resetAll();
+    window.backend.load(window.adData.loadFromServer, window.util.getInfoPopup);
+    console.log(window.variables.map.offsetLeft);
+    console.log(window.variables.map.offsetWidth);
   };
 
   // получение координат главной метки
@@ -46,25 +48,25 @@
         x: moveEvent.clientX,
         y: moveEvent.clientY
       };
+      pinCoords = {
+        x: window.variables.mainPin.offsetLeft - shift.x,
+        y: window.variables.mainPin.offsetTop - shift.y
+      };
       if (window.variables.mainPin.offsetTop - shift.y < window.constants.MAIN_PIN.COORDS_LIMIT.MIN_Y) {
         startCoords.y = window.constants.MAIN_PIN.COORDS_LIMIT.MIN_Y;
         shift.y = 0;
       } else if (window.variables.mainPin.offsetTop - shift.y > window.constants.MAIN_PIN.COORDS_LIMIT.MAX_Y - window.constants.MAIN_PIN.HEIGHT) {
         startCoords.y = window.constants.MAIN_PIN.COORDS_LIMIT.MAX_Y - window.constants.MAIN_PIN.HEIGHT;
         shift.y = 0;
-      } else if (window.variables.mainPin.offsetLeft - shift.x < window.constants.MAIN_PIN.COORDS_LIMIT.MIN_X) {
-        startCoords.x = window.constants.MAIN_PIN.COORDS_LIMIT.MIN_X;
+      } else if (window.variables.mainPin.offsetLeft - shift.x < window.constants.MAIN_PIN.COORDS_LIMIT.MIN_X + window.constants.MAIN_PIN.HALF_WIDTH) {
+        pinCoords.x = window.constants.MAIN_PIN.COORDS_LIMIT.MIN_X + window.constants.MAIN_PIN.HALF_WIDTH;
         shift.x = 0;
-      } else if (window.variables.mainPin.offsetLeft - shift.x > window.constants.MAIN_PIN.COORDS_LIMIT.MAX_X - window.constants.MAIN_PIN.WIDTH) {
-        startCoords.x = window.constants.MAIN_PIN.COORDS_LIMIT.MAX_X - window.constants.MAIN_PIN.WIDTH;
+      } else if (window.variables.mainPin.offsetLeft - shift.x > window.constants.MAIN_PIN.COORDS_LIMIT.MAX_X - window.constants.MAIN_PIN.HALF_WIDTH) {
+        pinCoords.x = window.constants.MAIN_PIN.COORDS_LIMIT.MAX_X - window.constants.MAIN_PIN.HALF_WIDTH;
         shift.x = 0;
       }
       window.variables.mainPin.style.top = (window.variables.mainPin.offsetTop - shift.y) + 'px';
       window.variables.mainPin.style.left = (window.variables.mainPin.offsetLeft - shift.x) + 'px';
-      pinCoords = {
-        x: window.variables.mainPin.offsetLeft - shift.x,
-        y: window.variables.mainPin.offsetTop - shift.y
-      };
       if (!window.variables.map.classList.contains('map--faded')) {
         getMainPinCoords(pinCoords);
       }

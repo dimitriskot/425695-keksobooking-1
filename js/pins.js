@@ -22,7 +22,7 @@
   // событие нажатия Esc при открытой информации об объявлении
   var onPinEscPress = function (event) {
     if (event.keyCode === window.constants.ESC_KEYCODE) {
-      window.adCard.closeCurrentAdCard(event);
+      window.adCard.hideCurrent(event);
     }
   };
 
@@ -41,11 +41,11 @@
     document.addEventListener('keydown', onPinEscPress);
     while (target !== window.variables.map) {
       if (target.className === 'map__pin') {
-        window.adCard.closeAdCard();
+        window.adCard.hide();
         deactivatePin();
         target.classList.add('map__pin--active');
         pinId = target.id.replace('pin-', '');
-        window.adCard.getAdCard(pinId, event);
+        window.adCard.display(pinId, event);
         return;
       }
       target = target.parentNode;

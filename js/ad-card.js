@@ -65,9 +65,9 @@
   };
 
   window.adCard = {
-    renderAdCard: renderAdCard,
-    getAdCard: getAdCard,
-    closeAdCard: closeAdCard,
-    closeCurrentAdCard: closeCurrentAdCard
+    render: renderAdCard,
+    display: getAdCard,
+    hide: closeAdCard,
+    hideCurrent: closeCurrentAdCard
   };
 })();

@@ -1,6 +1,34 @@
 'use strict';
 
 (function () {
+  var MIN_PRICES_OF_TYPE = [
+    '1000',
+    '0',
+    '5000',
+    '10000'
+  ];
+  var ONE_GUEST = {
+    value: 1,
+    text: 'для 1 гостя'
+  };
+  var TWO_GUESTS = {
+    value: 2,
+    text: 'для 2 гостей'
+  };
+  var THREE_GUESTS = {
+    value: 3,
+    text: 'для 3 гостей'
+  };
+  var NO_GUESTS = {
+    value: 0,
+    text: 'не для гостей'
+  };
+  var ROOM_CAPACITY = {
+    '1': [ONE_GUEST],
+    '2': [ONE_GUEST, TWO_GUESTS],
+    '3': [ONE_GUEST, TWO_GUESTS, THREE_GUESTS],
+    '100': [NO_GUESTS]
+  };
   var type = window.variables.noticeForm.querySelector('#type');
   var formTypes = type.children;
   var price = window.variables.noticeForm.querySelector('#price');
@@ -11,39 +39,7 @@
   var roomNumber = window.variables.noticeForm.querySelector('#room_number');
   var capacity = window.variables.noticeForm.querySelector('#capacity');
   var formResetButton = window.variables.noticeForm.querySelector('.form__reset');
-  var MIN_PRICES_OF_TYPE = [
-    '1000',
-    '0',
-    '5000',
-    '10000'
-  ];
 
-  var ONE_GUEST = {
-    value: 1,
-    text: 'для 1 гостя'
-  };
-
-  var TWO_GUESTS = {
-    value: 2,
-    text: 'для 2 гостей'
-  };
-
-  var THREE_GUESTS = {
-    value: 3,
-    text: 'для 3 гостей'
-  };
-
-  var NO_GUESTS = {
-    value: 0,
-    text: 'не для гостей'
-  };
-
-  var ROOM_CAPACITY = {
-    '1': [ONE_GUEST],
-    '2': [ONE_GUEST, TWO_GUESTS],
-    '3': [ONE_GUEST, TWO_GUESTS, THREE_GUESTS],
-    '100': [NO_GUESTS]
-  };
   // добавление атрибута disabled полям формы
   window.util.toggleDisabled(window.variables.fieldsets);
 
@@ -148,10 +144,10 @@
     window.pins.deletePins();
     window.variables.map.classList.add('map--faded');
     window.variables.noticeForm.classList.add('notice__form--disabled');
-    onRoomNumberChange();
+    // onRoomNumberChange();
     window.util.toggleDisabled(window.variables.fieldsets);
-    window.variables.mainPin.style.left = window.constants.MAIN_PIN_START_COORDS.x + 'px';
-    window.variables.mainPin.style.top = window.constants.MAIN_PIN_START_COORDS.y + 'px';
+    window.variables.mainPin.style.left = window.constants.MAIN_PIN.COORDS_START.X + 'px';
+    window.variables.mainPin.style.top = window.constants.MAIN_PIN.COORDS_START.Y + 'px';
   };
 
   var upLoadFormData = function (evt) {
