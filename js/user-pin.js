@@ -8,7 +8,7 @@
     window.util.toggleDisabled(window.variables.fieldsets);
     getMainPinCoords(window.constants.MAIN_PIN.COORDS_START);
     window.adFilter.resetAll();
-    window.backend.load(window.adData.loadFromServer, window.util.getInfoPopup);
+    window.backend.getData(window.adData.loadFromServer, window.util.getInfoPopup);
   };
 
   // получение координат главной метки
@@ -31,7 +31,10 @@
   // функция перетаскивания главной метки
   var dragMainPin = function (event) {
     event.preventDefault();
-    var pinCoords;
+    var pinCoords = {
+      x: window.variables.mainPin.offsetLeft,
+      y: window.variables.mainPin.offsetTop
+    };
     var startCoords = {
       x: event.clientX,
       y: event.clientY
@@ -46,15 +49,11 @@
         x: moveEvent.clientX,
         y: moveEvent.clientY
       };
-      pinCoords = {
-        x: window.variables.mainPin.offsetLeft - shift.x,
-        y: window.variables.mainPin.offsetTop - shift.y
-      };
       if (window.variables.mainPin.offsetTop - shift.y < window.constants.MAIN_PIN.COORDS_LIMIT.MIN_Y) {
-        startCoords.y = window.constants.MAIN_PIN.COORDS_LIMIT.MIN_Y;
+        startCoords.y = window.constants.MAIN_PIN.COORDS_LIMIT.MIN_Y - window.pageYOffset;
         shift.y = 0;
       } else if (window.variables.mainPin.offsetTop - shift.y > window.constants.MAIN_PIN.COORDS_LIMIT.MAX_Y - window.constants.MAIN_PIN.HEIGHT) {
-        startCoords.y = window.constants.MAIN_PIN.COORDS_LIMIT.MAX_Y - window.constants.MAIN_PIN.HEIGHT;
+        startCoords.y = window.constants.MAIN_PIN.COORDS_LIMIT.MAX_Y - window.constants.MAIN_PIN.HEIGHT - window.pageYOffset;
         shift.y = 0;
       } else if (window.variables.mainPin.offsetLeft - shift.x < window.constants.MAIN_PIN.COORDS_LIMIT.MIN_X + window.constants.MAIN_PIN.HALF_WIDTH) {
         pinCoords.x = window.constants.MAIN_PIN.COORDS_LIMIT.MIN_X + window.constants.MAIN_PIN.HALF_WIDTH;
@@ -65,9 +64,30 @@
       }
       window.variables.mainPin.style.top = (window.variables.mainPin.offsetTop - shift.y) + 'px';
       window.variables.mainPin.style.left = (window.variables.mainPin.offsetLeft - shift.x) + 'px';
+      pinCoords = {
+        x: window.variables.mainPin.offsetLeft - shift.x,
+        y: window.variables.mainPin.offsetTop - shift.y
+      };
       if (!window.variables.map.classList.contains('map--faded')) {
         getMainPinCoords(pinCoords);
       }
+    };
+    var onMouseWheel = function (wheelEvent) {
+      var shift = {
+        x: wheelEvent.deltaX,
+        y: -wheelEvent.deltaY
+      };
+      var scrolledX = pinCoords.y - window.pageYOffset;
+      var scrolledY = window.constants.MAIN_PIN.COORDS_LIMIT.MAX_Y - window.pageYOffset;
+      if (window.variables.mainPin.offsetTop - shift.y < scrolledX || window.variables.mainPin.offsetTop - shift.y < window.constants.MAIN_PIN.COORDS_LIMIT.MIN_Y) {
+        startCoords.y = window.variables.mainPin.offsetTop - window.pageYOffset;
+        shift.y = 0;
+      } else if (window.variables.mainPin.offsetTop - shift.y > scrolledY || window.variables.mainPin.offsetTop - shift.y > window.constants.MAIN_PIN.COORDS_LIMIT.MAX_Y - window.constants.MAIN_PIN.HEIGHT) {
+        startCoords.y = window.variables.mainPin.offsetTop - window.pageYOffset;
+        shift.y = 0;
+      }
+      window.variables.mainPin.style.top = (window.variables.mainPin.offsetTop - shift.y) + 'px';
+      window.variables.mainPin.style.left = (window.variables.mainPin.offsetLeft - shift.x) + 'px';
     };
     var onMouseUp = function (upEvent) {
       upEvent.preventDefault();
@@ -76,6 +96,7 @@
         y: window.variables.mainPin.offsetTop
       };
       window.variables.map.removeEventListener('mousemove', onMouseMove);
+      document.removeEventListener('wheel', onMouseWheel);
       document.removeEventListener('mouseup', onMouseUp);
       if (window.variables.map.classList.contains('map--faded')) {
         onMainPinMouseUp();
@@ -83,6 +104,7 @@
       getMainPinCoords(pinCoords);
     };
     window.variables.map.addEventListener('mousemove', onMouseMove);
+    document.addEventListener('wheel', onMouseWheel);
     document.addEventListener('mouseup', onMouseUp);
   };
 

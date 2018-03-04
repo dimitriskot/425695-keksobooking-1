@@ -3,9 +3,13 @@
 (function () {
   var FILTER_ANY = 'any';
   var PRICE_LEVELS = {
-    low: 'low',
-    middle: 'middle',
-    high: 'high'
+    LOW: 'low',
+    MIDDLE: 'middle',
+    HIGH: 'high'
+  };
+  var PRICE_RANGES = {
+    LOWER: 10000,
+    UPPER: 50000
   };
   var filteredAds = [];
   var typeFilter = window.variables.map.querySelector('#housing-type');
@@ -28,18 +32,18 @@
   // функция проверки объявлений по фильтру цены
   var checkPriceFilter = function (adCollection) {
     switch (priceFilter.value) {
-      case PRICE_LEVELS.low:
+      case PRICE_LEVELS.LOW:
         return adCollection.filter(function (ad) {
-          return ad.offer.price < 10000;
+          return ad.offer.price < PRICE_RANGES.LOWER;
         });
-      case PRICE_LEVELS.middle:
+      case PRICE_LEVELS.MIDDLE:
         return adCollection.filter(function (ad) {
-          return ad.offer.price >= 10000 && ad.offer.price <= 50000;
+          return ad.offer.price >= PRICE_RANGES.LOWER && ad.offer.price <= PRICE_RANGES.UPPER;
         });
 
-      case PRICE_LEVELS.high:
+      case PRICE_LEVELS.HIGH:
         return adCollection.filter(function (ad) {
-          return ad.offer.price >= 50000;
+          return ad.offer.price >= PRICE_RANGES.UPPER;
         });
       default:
         return adCollection;

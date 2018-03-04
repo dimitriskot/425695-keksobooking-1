@@ -9,6 +9,9 @@
     fragment: document.createDocumentFragment(),
     pinTemplate: document.querySelector('template').content.querySelector('.map__pin'),
     noticeForm: document.querySelector('.notice__form'),
+    photoContainer: document.querySelector('.form__photo-container'),
+    photoPreview: document.querySelector('#user-images'),
+    avatarPreview: document.querySelector('.notice__preview').querySelector('img'),
     ads: [],
     adsOnMap: []
   };

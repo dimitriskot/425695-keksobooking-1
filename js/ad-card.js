@@ -6,6 +6,7 @@
     house: 'Дом',
     bungalo: 'Бунгало'
   };
+  var RUB_SYMBOL = String.fromCharCode(8381);
 
   // получение характеристик жилища
   var getFeatures = function (adNumber, element) {
@@ -18,12 +19,32 @@
     }
   };
 
+  var getPhotos = function (adNumber, element) {
+    var popupPictures = element.querySelector('.popup__pictures');
+    if (adNumber.offer.photos.length > 0) {
+      for (var j = 0; j < adNumber.offer.photos.length; j++) {
+        var item = document.createElement('li');
+        var photoLink = document.createElement('a');
+        var photo = document.createElement('img');
+        window.variables.fragment.appendChild(item);
+        item.appendChild(photoLink);
+        photoLink.appendChild(photo);
+        photoLink.href = adNumber.offer.photos[j];
+        photoLink.target = '__blank';
+        photo.src = adNumber.offer.photos[j];
+        popupPictures.appendChild(item);
+      }
+    } else {
+      element.removeChild(popupPictures);
+    }
+  };
+
   // генерация карточки объявления
   var renderAdCard = function (adNumber) {
     var adCard = window.variables.adCardTemplate.cloneNode(true);
     adCard.querySelector('h3').textContent = adNumber.offer.title;
     adCard.querySelector('small').textContent = adNumber.offer.address;
-    adCard.querySelector('.popup__price').textContent = adNumber.offer.price + String.fromCharCode(8381) + '/ночь';
+    adCard.querySelector('.popup__price').textContent = adNumber.offer.price + RUB_SYMBOL + '/ночь';
     adCard.querySelector('.popup__type').textContent = HOUSE_DICT[adNumber.offer.type];
     var typeInfo = adNumber.offer.rooms + ' для ' + adNumber.offer.guests;
     adCard.querySelector('.popup__type-info').textContent = (adNumber.offer.guests === 1) ? typeInfo + ' гостя' : typeInfo + ' гостей';
@@ -31,6 +52,7 @@
     getFeatures(adNumber, adCard);
     adCard.querySelector('.popup__description').textContent = adNumber.offer.description;
     adCard.querySelector('.popup__avatar').src = adNumber.author.avatar;
+    getPhotos(adNumber, adCard);
     return adCard;
   };
 

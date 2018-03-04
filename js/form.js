@@ -141,6 +141,7 @@
     if (evt.target !== formResetButton) {
       window.util.getInfoPopup('Данные успешно отправлены!');
     }
+    window.adCard.hide();
     window.pins.deletePins();
     window.variables.map.classList.add('map--faded');
     window.variables.noticeForm.classList.add('notice__form--disabled');
@@ -148,11 +149,16 @@
     window.util.toggleDisabled(window.variables.fieldsets);
     window.variables.mainPin.style.left = window.constants.MAIN_PIN.COORDS_START.X + 'px';
     window.variables.mainPin.style.top = window.constants.MAIN_PIN.COORDS_START.Y + 'px';
+    window.variables.avatarPreview.src = window.constants.DEFAULT_AVATAR;
+    while (window.variables.photoPreview.firstChild) {
+      window.variables.photoPreview.removeChild(window.variables.photoPreview.firstChild);
+    }
+    window.variables.photoPreview.classList.remove('images__preview');
   };
 
   var upLoadFormData = function (evt) {
     evt.preventDefault();
-    window.backend.upload(new FormData(window.variables.noticeForm), resetForm, window.util.getInfoPopup);
+    window.backend.sendData(new FormData(window.variables.noticeForm), resetForm, window.util.getInfoPopup);
   };
 
   window.variables.noticeForm.addEventListener('submit', upLoadFormData);

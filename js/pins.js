@@ -28,8 +28,8 @@
 
   // удаление класса ..--active у метки
   var deactivatePin = function () {
-    if (document.querySelector('.map__pin--active')) {
-      var pinActive = document.querySelector('.map__pin--active');
+    var pinActive = document.querySelector('.map__pin--active');
+    if (pinActive) {
       pinActive.classList.remove('map__pin--active');
     }
   };
@@ -60,9 +60,8 @@
   };
 
   var deletePins = function () {
-    var mapPins = window.variables.map.querySelector('.map__pins');
-    while (!mapPins.lastElementChild.classList.contains('map__pin--main')) {
-      mapPins.removeChild(mapPins.lastElementChild);
+    while (!pinSet.lastElementChild.classList.contains('map__pin--main')) {
+      pinSet.removeChild(pinSet.lastElementChild);
     }
   };
 
