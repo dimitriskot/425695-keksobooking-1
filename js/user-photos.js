@@ -6,6 +6,8 @@
 
   var avatarChooser = document.querySelector('#avatar');
   var photoChooser = document.querySelector('#images');
+  var avatarDropZone = document.querySelector('.notice__photo .drop-zone');
+  var photoDropZone = document.querySelector('.form__photo-container .drop-zone');
   var draggedItem = null;
   var position = null;
   var oldPhoto = null;
@@ -18,9 +20,9 @@
     if (matches) {
       var reader = new FileReader();
       reader.addEventListener('load', function () {
-        if (evt.target === avatarChooser) {
+        if (evt.target === avatarChooser || evt.target === avatarDropZone) {
           window.variables.avatarPreview.src = reader.result;
-        } else {
+        } else if (evt.target === photoChooser || evt.target === photoDropZone) {
           var photo = document.createElement('img');
           window.variables.photoPreview.classList.add('images__preview');
           window.variables.photoPreview.appendChild(photo);
@@ -32,19 +34,41 @@
     }
   };
 
-  var getUserAvatar = function (evt) {
+  var onUserAvatarChange = function (evt) {
     var file = avatarChooser.files[0];
     getUserImages(file, evt);
   };
 
-  var getUserPhotos = function (evt) {
-    var file = photoChooser.files[photoChooser.files.length - 1];
+  var ontUserPhotosChange = function (evt) {
+    var file = photoChooser.files[0];
     getUserImages(file, evt);
   };
 
-  avatarChooser.addEventListener('change', getUserAvatar);
+  var onUserImageDrop = function (evt) {
+    evt.preventDefault();
+    var file = evt.dataTransfer.files[0];
+    getUserImages(file, evt);
+  };
 
-  photoChooser.addEventListener('change', getUserPhotos);
+  avatarChooser.addEventListener('change', onUserAvatarChange);
+
+  avatarDropZone.addEventListener('drop', onUserImageDrop);
+  avatarDropZone.addEventListener('dragenter', function (evt) {
+    evt.preventDefault();
+  });
+  avatarDropZone.addEventListener('dragover', function (evt) {
+    evt.preventDefault();
+  });
+
+  photoChooser.addEventListener('change', ontUserPhotosChange);
+
+  photoDropZone.addEventListener('drop', onUserImageDrop);
+  photoDropZone.addEventListener('dragenter', function (evt) {
+    evt.preventDefault();
+  });
+  photoDropZone.addEventListener('dragover', function (evt) {
+    evt.preventDefault();
+  });
 
   window.variables.photoPreview.addEventListener('dragstart', function (evt) {
     draggedItem = evt.target;
