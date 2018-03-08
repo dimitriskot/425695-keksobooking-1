@@ -11,10 +11,10 @@
         Y: window.variables.mainPin.offsetTop
       },
       COORDS_LIMIT: {
-        MIN_X: 0, // window.variables.map.offsetLeft,
+        MIN_X: 0,
         MAX_X: window.variables.map.offsetWidth,
-        MIN_Y: 150,
-        MAX_Y: 700
+        MIN_Y: 150, // координаты оставлены по договорённости с куратором
+        MAX_Y: 720 // координаты оставлены по договорённости с куратором
       },
       WIDTH: 62,
       HALF_WIDTH: 31,
